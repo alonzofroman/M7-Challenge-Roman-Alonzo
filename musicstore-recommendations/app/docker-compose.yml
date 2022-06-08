@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    image: recommend_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    restart: always
+    ports:
+      - '3306:3306'
+    volumes:
+      - /c/Users/alonz/Desktop/M7-Challenge-Roman-Alonzo/musicstore-recommendations/db/data:/var/lib/mysql
+    networks:
+      - recommendnetwork
+
+  app:
+    image: musicstore_recommendations
+    restart: always
+    ports:
+      - '8082:8082'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://recommend_db:3306/music_store_recommendations?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    depends_on:
+      - db
+    networks:
+      - crecommendnetwork
+
+networks:
+  recommendnetwork:
+    driver: bridge
