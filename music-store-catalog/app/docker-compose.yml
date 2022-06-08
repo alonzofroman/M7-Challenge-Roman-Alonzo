@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    image: catalog_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    restart: always
+    ports:
+      - '3306:3306'
+    volumes:
+      - /c/Users/alonz/Desktop/M7-Challenge-Roman-Alonzo/music-store-catalog/db/data:/var/lib/mysql
+    networks:
+      - catalognetwork
+
+  app:
+    image: music-store-catalog
+    restart: always
+    ports:
+      - '8081:8081'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://catalog_db:3306/catalog_db?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    depends_on:
+      - db
+    networks:
+      - catalognetwork
+
+networks:
+  catalognetwork:
+    driver: bridge
