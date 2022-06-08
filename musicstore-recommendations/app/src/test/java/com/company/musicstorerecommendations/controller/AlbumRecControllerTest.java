@@ -86,5 +86,41 @@ public class AlbumRecControllerTest {
                 .andExpect(content().json(outputJson));
     }
 
+    @Test
+    public void shouldGetOneAlbumOnGetRequestById() throws Exception {
+        String outputJson = mapper.writeValueAsString(outputAlbumRec);
+
+        mockMvc.perform(get("/albumrec/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson));
+    }
+
+    @Test
+    public void shouldUpdateAlbumRecOnPutRequest() throws Exception {
+        String inputJson = mapper.writeValueAsString(updateAlbumRec);
+
+        mockMvc.perform(put("/albumrec/1")
+                .content(inputJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldDeleteAlbumRecOnDeleteRequest() throws Exception {
+        mockMvc.perform(delete("/albumrec/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldReturn422ErrorWhenIncorrectIdIsInUpdateRequest() throws Exception {
+        String inputJson = mapper.writeValueAsString(incorrectUpdateRec);
+        mockMvc.perform(put("/albumrec/1")
+                .content(inputJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
 
 }
