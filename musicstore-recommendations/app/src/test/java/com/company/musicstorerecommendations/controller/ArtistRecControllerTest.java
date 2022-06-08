@@ -86,7 +86,7 @@ public class ArtistRecControllerTest {
     public void shouldGetOneArtistRecOnGetRequestById() throws Exception {
         String outputJson = mapper.writeValueAsString(outputRec);
 
-        mockMvc.perform(get("artistrec/1"))
+        mockMvc.perform(get("/artistrec/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson));
     }
@@ -109,7 +109,12 @@ public class ArtistRecControllerTest {
 
     @Test
     public void shouldReturn422ErrorWhenIncorrectIdIsInPutRequest() throws Exception {
-
+        String inputJson = mapper.writeValueAsString(incorrectRec);
+        mockMvc.perform(put("/artistrec/1")
+                .content(inputJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
 }
