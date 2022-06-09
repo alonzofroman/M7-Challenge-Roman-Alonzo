@@ -15,7 +15,7 @@ services:
       - recommendnetwork
 
   app:
-    image: musicstore_recommendations
+    image: recommend_app
     restart: always
     ports:
       - '8082:8082'
@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
     networks:
-      - crecommendnetwork
+      - recommendnetwork
 
 networks:
   recommendnetwork:
