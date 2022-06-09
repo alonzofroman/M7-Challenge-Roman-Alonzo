@@ -1,8 +1,8 @@
 package com.company.musicstorecatalog.controller;
 
 import com.company.musicstorecatalog.exception.NonMatchingIdException;
-import com.company.musicstorecatalog.model.Album;
-import com.company.musicstorecatalog.repository.AlbumRepository;
+import com.company.musicstorecatalog.model.Artist;
+import com.company.musicstorecatalog.repository.ArtistRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,91 +26,74 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(AlbumController.class)
-public class AlbumControllerTest {
+@WebMvcTest(ArtistController.class)
+public class ArtistControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private AlbumRepository repo;
+    private ArtistRepository repo;
 
     @Autowired
     private ObjectMapper mapper;
 
-    Album inputAlbum;
-    Album outputAlbum;
-    Album updateAlbum;
-    Album incorrectAlbum;
-    List<Album> outputList;
+    Artist inputArtist;
+    Artist outputArtist;
+    Artist updateArtist;
+    Artist incorrectArtist;
+    List<Artist> outputList;
 
     @Before
     public void setUp() throws Exception {
+        inputArtist = new Artist();
+        inputArtist.setName("Jack White");
+        inputArtist.setInstagram("https://www.instagram.com/officialjackwhite/?hl=en");
+        inputArtist.setTwitter("https://twitter.com/thirdmanrecords");
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, 2008);
-        cal.set(Calendar.MONTH, Calendar.MARCH);
-        cal.set(Calendar.DAY_OF_MONTH, 23);
-        Date inputDate = cal.getTime();
+        outputArtist = new Artist(1,"Jack White", "https://www.instagram.com/officialjackwhite/?hl=en", "https://twitter.com/thirdmanrecords");
+        updateArtist = new Artist(1,"Jack White", "https://www.instagram.com/officialjackwhite/", "https://twitter.com/thirdmanrecords");
+        incorrectArtist = new Artist(500,"Jack White", "https://www.instagram.com/officialjackwhite/", "https://twitter.com/thirdmanrecords");
+        outputList = new ArrayList<>(Arrays.asList(outputArtist));
 
-        Calendar cal2 = Calendar.getInstance();
-        cal2.set(Calendar.YEAR, 2012);
-        cal2.set(Calendar.MONTH, Calendar.MARCH);
-        cal2.set(Calendar.DAY_OF_MONTH, 23);
-        Date updateDate = cal2.getTime();
-
-        inputAlbum = new Album();
-        inputAlbum.setArtistId(1);
-        inputAlbum.setLabelId(1);
-        inputAlbum.setlistPrice(new BigDecimal(9.99));
-        inputAlbum.setTitle("Blunderbuss");
-        inputAlbum.setReleaseDate(inputDate);
-
-
-
-        outputAlbum = new Album(1,"Blunderbuss",1, inputDate, 1, new BigDecimal(9.99));
-        updateAlbum = new Album(1,"Blunderbuss",1, updateDate, 1, new BigDecimal(9.99));
-        incorrectAlbum = new Album(500,"Blunderbuss",1, updateDate, 1, new BigDecimal(9.99));
-        outputList = new ArrayList<>(Arrays.asList(outputAlbum));
-
-        doReturn(Optional.of(outputAlbum)).when(repo).findById(1);
+        doReturn(Optional.of(outputArtist)).when(repo).findById(1);
         doReturn(outputList).when(repo).findAll();
-        doThrow(new NonMatchingIdException("Incorrect ID input")).when(repo).save(incorrectAlbum);
+        doThrow(new NonMatchingIdException("Incorrect ID input")).when(repo).save(incorrectArtist);
     }
 
     @Test
-    public void shouldAddNewAlbumOnPostRequest() throws Exception {
-        String inputJson = mapper.writeValueAsString(inputAlbum);
+    public void shouldAddNewArtistOnPostRequest() throws Exception {
+        String inputJson = mapper.writeValueAsString(inputArtist);
 
-        mockMvc.perform(post("/album")
+        mockMvc.perform(post("/artist")
                         .content(inputJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    public void shouldGetAllAlbumOnGetRequest() throws Exception {
+    public void shouldGetAllArtistsAsAListOnGetRequest() throws Exception {
         String outputJson = mapper.writeValueAsString(outputList);
 
-        mockMvc.perform(get("/album"))
+        mockMvc.perform(get("/artist"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson));
     }
 
     @Test
-    public void shouldGetOneAlbumOnGetRequestById() throws Exception {
-        String outputJson = mapper.writeValueAsString(outputAlbum);
+    public void shouldGetOneArtistOnGetRequestById() throws Exception {
+        String outputJson = mapper.writeValueAsString(outputArtist);
 
-        mockMvc.perform(get("/album/1"))
+        mockMvc.perform(get("/artist/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson));
     }
 
     @Test
-    public void shouldUpdateAlbumOnPutRequest() throws Exception {
-        String inputJson = mapper.writeValueAsString(updateAlbum);
+    public void shouldUpdateArtistOnPutRequest() throws Exception {
+        String inputJson = mapper.writeValueAsString(updateArtist);
 
-        mockMvc.perform(put("/album/1")
+        mockMvc.perform(put("/artist/1")
                         .content(inputJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -118,19 +101,18 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void shouldDeleteAlbumOnDeleteRequest() throws Exception {
-        mockMvc.perform(delete("/album/1"))
+    public void shouldDeleteArtistOnDeleteRequest() throws Exception {
+        mockMvc.perform(delete("/artist/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     public void shouldReturn422ErrorWhenIncorrectIdIsInUpdateRequest() throws Exception {
-        String inputJson = mapper.writeValueAsString(incorrectAlbum);
-        mockMvc.perform(put("/album/1")
+        String inputJson = mapper.writeValueAsString(incorrectArtist);
+        mockMvc.perform(put("/artist/1")
                         .content(inputJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
-
 }
