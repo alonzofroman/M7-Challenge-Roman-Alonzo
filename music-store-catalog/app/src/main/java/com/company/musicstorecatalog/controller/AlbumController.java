@@ -1,6 +1,7 @@
 package com.company.musicstorecatalog.controller;
 
 import com.company.musicstorecatalog.exception.BadIdException;
+import com.company.musicstorecatalog.exception.NonMatchingIdException;
 import com.company.musicstorecatalog.model.Album;
 import com.company.musicstorecatalog.repository.AlbumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class AlbumController {
         if (album.getId() == null) {
             album.setId(id);
         } if (album.getId() != id) {
-            throw new BadIdException("The Id in your path does not match the id, " + id + "in the request body, " + album.getId());
+            throw new NonMatchingIdException("The Id in your path does not match the id, " + id + "in the request body, " + album.getId());
         }
         repo.save(album);
     }

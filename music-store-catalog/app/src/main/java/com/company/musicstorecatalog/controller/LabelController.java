@@ -1,6 +1,7 @@
 package com.company.musicstorecatalog.controller;
 
 import com.company.musicstorecatalog.exception.BadIdException;
+import com.company.musicstorecatalog.exception.NonMatchingIdException;
 import com.company.musicstorecatalog.model.Label;
 import com.company.musicstorecatalog.repository.LabelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class LabelController {
             label.setId(id);
         }
         else if (label.getId() != id) {
-            throw new BadIdException("The label id in your path does not match the id in your request body.");
+            throw new NonMatchingIdException("The label id in your path does not match the id in your request body.");
         }
         repo.save(label);
     }

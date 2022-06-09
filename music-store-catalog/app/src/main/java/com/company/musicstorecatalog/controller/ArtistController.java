@@ -1,6 +1,7 @@
 package com.company.musicstorecatalog.controller;
 
 import com.company.musicstorecatalog.exception.BadIdException;
+import com.company.musicstorecatalog.exception.NonMatchingIdException;
 import com.company.musicstorecatalog.model.Artist;
 import com.company.musicstorecatalog.repository.ArtistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class ArtistController {
         if (artist.getId() == null) {
             artist.setId(id);
         } else if (artist.getId() != id) {
-            throw new BadIdException("The id in your path (" + id + ") is " +
+            throw new NonMatchingIdException("The id in your path (" + id + ") is " +
                     "different from the id in your body (" + artist.getId() + ").");
         }
 

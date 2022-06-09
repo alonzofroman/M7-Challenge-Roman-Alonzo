@@ -1,6 +1,7 @@
 package com.company.musicstorecatalog.controller;
 
 import com.company.musicstorecatalog.exception.BadIdException;
+import com.company.musicstorecatalog.exception.NonMatchingIdException;
 import com.company.musicstorecatalog.model.Track;
 import com.company.musicstorecatalog.repository.TrackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class TrackController {
             track.setId(id);
         }
         else if (track.getId() != id) {
-            throw new BadIdException("The ID in your path and the ID in your request body do not match.");
+            throw new NonMatchingIdException("The ID in your path and the ID in your request body do not match.");
         }
         repo.save(track);
     }
